@@ -1,0 +1,162 @@
+/*
+ID: yuguess1
+LANG: C
+TASK: zerosum
+*/
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <assert.h>
+
+#define OUTPUT stdout 
+
+#define MAX 9 
+
+char sym_stack[MAX]; 
+int length = 0;
+int top = 0;
+
+void print_stack() {
+    int i = 0;
+    for (i = 0; i < length; i++) {
+        //printf("%d", i + 1);
+        printf("%c", sym_stack[i]);
+    }
+    printf("\n");
+}
+
+void push(char c) {
+    sym_stack[top] = c;
+    ++top;
+    assert(top < MAX);
+}
+
+void pop() {
+    top--;
+    assert(top >= 0);
+}
+int glo[MAX];
+
+int subsum(int *data, int begin, int end, int sum) {
+    if (begin == end) {
+        if (data[begin] == sum) {
+            print_stack(); 
+            return 0;
+        }
+        return -1;
+    }
+/*
+    int array[MAX];
+    int i = 0;
+    for (i = 0; i < length; i++) {
+        array[i] = i + 1;
+    }
+
+    array[begin + 1] = data[begin] * 10 + data[begin + 1];  
+
+    push(' ');
+    subsum(array, begin + 1, end, sum); 
+    pop();
+*/
+    /*
+    push('+');
+    subsum(data, begin, end - 1, sum - data[end]);
+    pop();
+
+    push('-');
+    subsum(data, begin, end - 1, data[end] - sum);
+    pop();
+    */
+    /*
+    push('+');
+    print_stack();
+    printf("expect range %d ~ %d to be %d, sum %d, data[begin] %d\n", begin + 2, end + 1, sum - data[begin], sum, data[begin]);
+    printf("running sum %d\n", running_sum);
+    //printf("plus begin %d, end %d, sum %d, data %d, sum - data %d\n", begin + 1, end, sum, data[begin], sum - data[begin]);
+    subsum(data, begin + 1, end, sum - data[begin], running_sum + data[begin]);
+    pop();
+
+    push('-');
+    print_stack();
+    printf("expect range %d ~ %d to be %d, sum %d, data[begin] %d\n", begin + 2, end + 1, (running_sum - sum), sum, data[begin]);
+    printf("running sum %d\n", running_sum);
+    //printf("minus begin %d, end %d, sum %d, data %d, sum + data %d\n", begin + 1, end, sum, data[begin], data[begin] - sum);
+    subsum(data, begin + 1, end, (running_sum - sum), running_sum - data[begin]);
+    pop();
+    */
+}
+
+void evaluate(int *data, int data_len) {
+    int sum = data[0];
+    int i =0;
+    for (i = 0; i < data_len - 1; i++) {
+        if (sym_stack[i] == '+') {
+            sum += data[i + 1]; 
+        }
+
+        if (sym_stack[i] == '-') {
+            sum -= data[i + 1];
+        }
+    }
+
+    if (sum == 0) {
+        printf("%d", glo[0]);
+        for (i = 0; i < data_len - 1; i++) {
+            printf("%c", sym_stack[i]);       
+            printf("%d", glo[i + 1]);
+        }
+        printf("\n");
+    }
+}
+
+void push_symbol(int *data, int length, int data_len) {
+    if (length == 0) {
+        evaluate(data, data_len);
+        return;
+    }
+
+    int array[MAX];
+    int i = 0;
+    for (i = 0; i < length; i++) {
+        array[i] = i + 1;
+    }
+
+    push(' ');
+    array[1] = array[0] * 10 + array[1];  
+    push_symbol(array + 1, length - 1, data_len - 1); 
+    pop();
+    
+    push('+');
+    push_symbol(data, length - 1, data_len);
+    pop();
+
+    push('-');
+    push_symbol(data, length - 1, data_len);
+    pop();
+}
+
+
+
+int main () {
+    FILE *fin = fopen("zerosum.in", "r");
+    FILE *fout = fopen("zerosum.out", "w");
+
+    fscanf(fin, "%d", &length);
+
+    int i = 0;
+    for (i = 0; i < MAX; i++) {
+        glo[i] = i + 1;
+    }
+
+    int data[MAX];
+    
+    for (i = 0; i < length; i++) {
+        data[i] = i + 1;
+    }
+
+    push_symbol(data, length - 1, length);
+
+    fclose(fin);
+    fclose(fout);
+}

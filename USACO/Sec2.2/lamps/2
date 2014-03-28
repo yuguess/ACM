@@ -1,0 +1,29 @@
+/*
+ID: yuguess1
+LANG: C
+TASK: lamps
+*/
+
+/**
+ * 1. the number of pressing button can be treated as even and odd
+ *
+ *
+ */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define OUTPUT stdout
+
+int main () {
+    int N, i, j, sum;
+
+    FILE *fin = fopen("lamps.in", "r");
+    FILE *fout = fopen("lamps.out", "w");
+
+    //fscanf(fin, "%d", &N);
+    //fprintf(OUTPUT, "%d\n", table[sum][N]);
+    
+    fclose(fin);
+    fclose(fout);
+}

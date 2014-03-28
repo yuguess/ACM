@@ -1,0 +1,13 @@
+/*
+ID: yuguess1
+LANG: C
+TASK: concom 
+*/
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int main () {
+
+}

@@ -1,0 +1,184 @@
+/*
+ID: yuguess1
+LANG: C
+TASK: nocows
+*/
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define OUTPUT fout 
+#define MAX_NODE 200
+#define MAX_LEVEL 100
+#define MOD 9901
+
+#define DEBUG
+#ifdef DEBUG
+#define OUTPUT stdout
+#endif
+
+int table[MAX_NODE][MAX_LEVEL];
+
+int max(int a, int b) {
+    return a > b ? a : b;
+}
+
+int min(int a, int b) {
+    return a > b ? b : a;
+}
+
+int update_table(int N, int K, int degree) {
+    if (degree > table[N][K])
+        table[N][K] = degree;
+}
+
+int check_table(int N, int K) {
+    return table[N][K];
+}
+
+int min_node(int K) {
+    if (K <= 0)
+        return 0;
+    else 
+        return 2 * K - 1;
+}
+
+int max_node(int K) {
+    if (K <= 0)
+        return 0;
+    else 
+        return (1 << K) - 1;
+}
+
+int min_level(int N) {
+    if (N <= 0) 
+        return 0;
+
+    if (N == 1)
+        return 1;
+    else 
+        return ceil(log(N) / log(2));
+}
+
+int max_level(int N) {
+    if (N <= 0)
+        return 0;
+    else
+        return (N + 1) / 2;
+}
+
+int pedigrees(N, K) {
+#ifdef DEBUG
+    printf("problem N:%d K:%d==========\n", N, K);
+#endif
+
+    int i, j, sum;
+    if ((sum = check_table(N, K)) != -1) {
+        return sum;
+    }
+
+    if (N < min_node(K) || N > max_node(K)) { 
+        update_table(N, K, 0);
+#ifdef DEBUG
+        printf("result problem N:%d K:%d, result:%d===========\n", N, K, 0);
+#endif
+        return 0;
+    }
+
+    int total_sum = 0;
+
+    int half = (N - 1) / 2;
+    int half_num = pedigrees(half, K - 1);
+
+#ifdef DEBUG
+    printf("left, right %d, height %d, half sum %d\n", half, K - 1, half_num);
+#endif
+
+    int half_sum = half_num * half_num;
+
+#ifdef DEBUG
+    printf("half sum %d\n", half_sum);
+#endif
+    
+    int left_sum = 0;
+    int left = 0;
+    if (half % 2 == 0) {
+        left = half + 1;
+    } else {
+        left = half + 2;
+    }
+    int left_min = min_node(K - 1);
+    int left_max = min(max_node(K - 1), N - 2);
+
+    int tmp = 0;
+
+    left = max(left, left_min); 
+
+#ifdef DEBUG
+        printf("left range %d ~ %d, height %d \n", left, left_max, K - 1);
+#endif   
+
+    for (i = left; i <= left_max; i = i + 2) {
+
+        tmp = pedigrees(i, K - 1); 
+        left_sum = tmp;
+ 
+        int right = N - 1 - i;
+        int min_height = min_level(right);
+        int max_height = max_level(right);
+        int right_sum = 0;
+
+        for (j = min_height; j <= max_height; j++) {
+            tmp = pedigrees(right, j); 
+            right_sum += tmp;
+        }
+
+#ifdef DEBUG
+        printf("left %d, right %d\n", i, right);
+        printf("left sum %d, right sum %d\n", left_sum, right_sum);
+#endif      
+
+        total_sum += left_sum * right_sum * 2;
+    }
+
+    
+    total_sum += half_sum;
+
+    update_table(N, K, total_sum);
+
+#ifdef DEBUG
+    printf("result problem N:%d K:%d, result:%d===========\n", N, K, total_sum);
+#endif
+
+    return total_sum;
+}
+
+int init_data() {
+    int i, j;
+    for (i = 0; i < MAX_NODE; i++) 
+        for (j = 0; j < MAX_LEVEL; j++) 
+            table[i][j] = -1;
+
+    table[1][1] = 1;
+    table[3][2] = 1;
+}
+
+int main () {
+    int N, K, num;
+    FILE *fin = fopen("nocows.in", "r");
+    FILE *fout = fopen("nocows.out", "w");
+
+    fscanf(fin, "%d", &N); 
+    fscanf(fin, "%d", &K); 
+
+    init_data();
+
+    num = pedigrees(N, K);
+
+    fprintf(OUTPUT, "%d\n", num % MOD);  
+
+    fclose(fin);
+    fclose(fout);
+}

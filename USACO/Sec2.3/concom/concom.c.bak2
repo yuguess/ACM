@@ -1,0 +1,104 @@
+/*
+ID: yuguess1
+LANG: C
+TASK: concom 
+*/
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define FOUT fout 
+#define MAX 101
+#define OWN_PERC 50
+
+typedef struct {
+  int isChecked;
+  int owns[MAX];
+  int checks[MAX];
+} Company;
+
+Company companies[MAX];
+
+void ownership_induction(int i) {
+  //printf("induce company %d\n", i);
+  int j, t;
+  
+  for (j = 1; j < MAX; j++) {
+    if (i == j) {
+      continue;
+    }
+    if (companies[i].owns[j] > OWN_PERC) {
+      companies[i].owns[j] = 51;
+      if (companies[i].checks[j] == 0) {
+        companies[i].checks[j] = 1;
+        //printf("%d own %d perc %d\n", i, j, companies[i].owns[j]);
+        if (!companies[j].isChecked) {
+          //printf("%d is not checked, check!\n", j);
+          ownership_induction(j);
+        }
+
+        for (t = 1; t < MAX; t++) {
+          if (companies[i].owns[t] < 50)
+            companies[i].owns[t] += companies[j].owns[t]; 
+          
+          if (companies[j].owns[t] > 50) {
+            companies[i].checks[t] = 1;
+          }
+        }
+        j = 0;
+      }
+    }
+  }
+  companies[i].isChecked = 1;
+}
+
+int data_init() {
+  int i, j;
+  for (i = 0; i < MAX; i++) {
+    companies[i].isChecked = 0;
+    for (j = 0; j < MAX; j++) {
+      companies[i].owns[j] = 0;
+      companies[i].checks[j] = 0;
+    }
+  }
+}
+
+int main () {
+  int N, i, j, owner, ownee, perc;
+  int print_flag = 0;
+
+  FILE *fin = fopen("concom.in", "r");
+  FILE *fout = fopen("concom.out", "w");
+
+  data_init();
+
+  fscanf(fin, "%d", &N);
+  for (i = 0; i < N; i++) {
+    fscanf(fin, "%d %d %d", &owner, &ownee, &perc);  
+    companies[owner].owns[ownee] += perc;
+  }
+
+  for (i = 1; i < MAX; i++) {
+    //printf("from main %d", i);
+    ownership_induction(i);
+  }
+
+  for (i = 1; i < MAX; i++) {
+    for (j = 1; j < MAX; j++) {
+      if (i == j)
+        continue;
+      if (companies[i].owns[j] > OWN_PERC) {
+        print_flag = 1;
+        fprintf(FOUT, "%d %d\n", i, j);
+        //fprintf(stdout, "%d %d %d\n", i, j, companies[i].owns[j]);
+      }
+    }
+  }
+
+  if (print_flag == 0) {
+    fprintf(FOUT, "0\n");
+  }
+
+  return 0;
+}
