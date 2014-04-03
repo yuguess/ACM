@@ -1,70 +1,91 @@
 #include <stdio.h>
+#include <iostream>
+#include <string.h>
+#include <vector>
+#include <climits>
 #include <algorithm>
+#include <assert.h>
 using namespace std;
 
-#define IN stdin
-#define MAX 100000
+#define INF -INT_MAX 
+#define MAX_N 100100
 
-int n, q;
-
-int c[MAX];
-int v[MAX];
-long long max_v[MAX] = {0};
+int v[MAX_N];
+int c[MAX_N];
+vector<long long> s;
 
 int main() {
-  int a, b;
-  FILE *fin = fopen("E.in", "r");
+  int n = 0, q = 0, maxC = -1, secMaxC = -1;
+  long long a = 0, b = 0;
+
+  scanf("%d %d", &n, &q);
+  for (int i = 0; i < n; i++)
+    cin >> v[i];
+
+  for (int i = 0; i < n; i++)
+    cin >> c[i]; 
   
-  fscanf(IN, "%d %d", &n, &q);
-  for (int i = 0; i < n; i++) {
-    fscanf(IN, "%d", &(v[i]));
-  }
-
-  for (int i = 0; i < n; i++) {
-    fscanf(IN, "%d", &(c[i]));
-  }
-
-  long long max_r = 0;
 
   for (int i = 0; i < q; i++) {
-    fscanf(IN, "%d %d", &a, &b);
-    long long la = a;
-    long long lb = b;
-    if (v[0] == 82725) {
-      printf("a %d, b %d", a, b);
-      //printf("%I64d\n", 5008451980);
-      /*
-      for (int p = 0; p < n; p++)
-        printf("%d\n", v[p]);
-      printf("\n\n");
-      for (int p = 0; p < n; p++)
-        printf("%d\n", c[p]);
-      printf("\n\n");
-      printf("%d %d\n", a, b);
-      */
-    }
+    cin >> a >> b;
+
+    s = vector<long long>(MAX_N, INF);
+
+    for (int j = 0; j < n; j++) {
       
-    for (int k = 0; k < n; k++) {
-      long long tmp1 = lb * v[k];
-      max_v[k] = max((long long)0, tmp1);
+      if (c[j] != maxC && c[j] != secMaxC) {
 
-      for (int j = k - 1; j >= 0; j--) {
-        if (c[k] == c[j]) {
+        if (s[c[j]] == INF) {
+          if (maxC == -1) { 
+            s[c[j]] = b * v[j];
+            maxC = c[j];
+            continue;
+          }
 
-          long long tmp = la * ((long long)v[k]);
-          max_v[k] = max(max_v[k], max_v[j] + tmp); 
+          if (secMaxC == -1) {
+            s[c[j]] = b * v[j];
+            secMaxC = c[j];
+          }
+
+          s[c[j]] = max(b * v[j], s[maxC] + b * v[j]);
         } else {
-          long long tmp = lb * ((long long)v[k]);
-          max_v[k] = max(max_v[k], max_v[j] + tmp);
+          s[c[j]] = max(max(b * v[j], s[c[j]]),  
+              max(s[c[j]] + a * v[j], s[maxC] + b * v[j]));
+        }
+
+        if (s[c[j]] > s[maxC]) {
+          secMaxC = maxC;
+          maxC = c[j];
+        } else if (s[c[j]] > s[secMaxC]) {
+          secMaxC = c[j];
+        }
+
+
+      } else if (c[j] == maxC) {
+
+        if (secMaxC != -1)
+          s[c[j]] = max(max(s[maxC], b * v[j]), 
+            max(s[maxC] + a * v[j], s[secMaxC] + b * v[j]));
+        else 
+          s[c[j]] = max(max(s[maxC], b * v[j]), s[maxC] + a * v[j]);
+
+      } else if (c[j] == secMaxC) {
+
+        s[c[j]] = max(max(s[secMaxC], b * v[j]), 
+            max(s[secMaxC] + a * v[j], s[maxC] + b * v[j]));
+
+        if (s[secMaxC] > s[maxC]) {
+          swap(maxC, secMaxC);
         }
       }
-      //printf("k %d, %d\n", k, max_v[k]);
-      //getchar();
-      max_r = max(max_v[k], max_r); 
     }
 
-    printf("%I64d\n", max_r);
-    max_r = 0; 
+    cout << max((long long)0, s[maxC]) << endl;
+
+    maxC = -1;
+    secMaxC = -1;
+    s.clear();
   }
 
+  return 0;
 }
