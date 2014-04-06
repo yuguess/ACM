@@ -27,7 +27,9 @@ void solve()
     {
         dp[i] = 1, num[i] = 1;
 
-        for (int j = 0; j < i; ++j)
+        printf("seq %d %d\n", i, seq[i]);
+        for (int j = 0; j < i; ++j) {
+          
             if ((seq[i]%col) >= (seq[j]%col))
             {
                 if (dp[i] < dp[j] + 1)
@@ -37,6 +39,8 @@ void solve()
                 else if (dp[i] == dp[j] + 1)
                     num[i] += num[j];
             }
+    }
+        printf("%d %d\n", i, dp[i]); 
     }        
     if (!g[row][col])
         --dp[n-1];
