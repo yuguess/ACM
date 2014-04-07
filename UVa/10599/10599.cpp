@@ -58,7 +58,6 @@ int main() {
         maxW += wv[i];
         last = i;
       }
-
     }
 
     printf("CASE#%d: %d %d", ++cases, maxC, maxW);
