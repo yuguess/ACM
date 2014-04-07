@@ -5,8 +5,6 @@
 #include <map>
 using namespace std;
 
-#define MAX 50
-
 class Solution {
 public:
   vector<string> generateParenthesis(int n) {
