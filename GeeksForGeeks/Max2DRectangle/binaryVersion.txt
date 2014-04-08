@@ -1,0 +1,17 @@
+for binary version
+firstly, compress the matrix, for example, by column major  
+0 0 1 1 
+1 0 1 1
+1 1 1 0
+1 1 1 1
+
+can be compressed into
+
+0 0 4 2
+3 0 3 1
+2 2 2 0
+1 1 1 1
+
+then the problem can be solved by using a monotonous queue
+right scan and left scan to find right, left limit for each number 
+refer to POJ 2559 for detail solution 
