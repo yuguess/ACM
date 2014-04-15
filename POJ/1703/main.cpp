@@ -12,17 +12,14 @@ int r[MAX_N];
 int sz[MAX_N];
 
 int root(int n) {
-  //printf("find root %d\n", n);
-  while (n != s[n]) {
-    //r[n] =  r[n] ^ r[s[n]];
-    r[n] = r[n] + r[s[n]];
-    s[n] = s[s[n]];
+  if (n == s[n]) 
+    return n;
 
-    n = s[n];
-  }
+  int p = s[n];
+  s[n] = root(p);
+  r[n] = (r[n] ^ r[p]);
 
-  //printf("root %d\n", n);
-  return n;
+  return s[n];
 }
 
 int find(int p, int q) {
@@ -30,6 +27,9 @@ int find(int p, int q) {
 }
 
 int unite(int p, int q) {
+  if (p == q)
+    return 0;
+
   int rp = root(p);
   int rq = root(q);
 
@@ -37,13 +37,13 @@ int unite(int p, int q) {
     if (sz[rp] > sz[rq]) {
       s[rq] = rp;      
       sz[rp] += sz[rq];
-      sz[rq] = (r[p] + 1 + r[q]) % 2;
-      //r[rq] = r[p] ^ 1 ^ r[q]; 
+      //r[rq] = (r[p] + 1 + r[q]) % 2;
+      r[rq] = r[q] ^ 1 ^ r[p]; 
     } else {
       s[rp] = rq;      
       sz[rq] += sz[rp];
-      sz[rp] = (r[p] + 1 + r[q]) % 2;
-      //r[rp] = r[p] ^ 1 ^ r[q];
+      //r[rp] = (r[p] + 1 + r[q]) % 2;
+      r[rp] = r[p] ^ 1 ^ r[q];
     }
   }
 }
