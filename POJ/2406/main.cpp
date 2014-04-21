@@ -25,7 +25,7 @@ void buildFailure() {
       }
 
       if (j == 0) {
-        F[j] = 0; 
+        F[i] = 0; 
         break;
       }
 
