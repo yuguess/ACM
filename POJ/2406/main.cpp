@@ -5,14 +5,15 @@
 #include <map>
 using namespace std;
 
-#define MAX 1000010
+#define MAX 1000100
 char s[MAX];
-char F[MAX];
+int F[MAX];
 int l = 0;
 
 void buildFailure() {
   int j = 0;
-  F[0] = F[1] = 0;
+  F[0] = 0;
+  F[1] = 0;
 
   for (int i = 2; i <= l; i++) {
     j = F[i - 1]; 
@@ -44,5 +45,7 @@ int main() {
     } else {
       printf("1\n");
     }
+
+    memset(F, 0, sizeof(int) * (l + 1));
   }
 }
