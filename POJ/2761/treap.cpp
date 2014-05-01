@@ -127,6 +127,7 @@ public:
 
   }
 
+
 private:
   bool isLeaf(int n) {
     return (pool[n].right == -1 && pool[n].left == -1);
