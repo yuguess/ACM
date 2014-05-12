@@ -17,7 +17,7 @@ void update(int idx, int val) {
 }
 
 int findKth(int k) {
-  int mb = (int)(log2(k)) + 2, cnt = 0, ans = 0;
+  int mb = (int)(log2(k)) + 3, cnt = 0, ans = 0;
   //int mb = 20, cnt = 0, ans = 0;
 
   //printf("mb %d, k %d\n", mb, k);
