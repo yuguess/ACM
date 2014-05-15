@@ -22,7 +22,7 @@ public:
   }
 
   inline void update(int tm) {
-    while (!l.empty() && l.front().second< tm) {
+    while (!l.empty() && l.front().second < tm) {
       l.pop_front();
     }
   }
